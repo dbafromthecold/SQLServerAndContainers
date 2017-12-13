@@ -1,0 +1,17 @@
+
+FROM microsoft/mssql-server-linux:latest
+
+RUN mkdir /var/opt/sqlserver
+
+ENV SA_PASSWORD=Testing11@@
+ENV ACCEPT_EULA=Y
+
+COPY DatabaseA.mdf /var/opt/sqlserver
+COPY DatabaseA_log.ldf /var/opt/sqlserver
+
+HEALTHCHECK --interval=10s  \
+	CMD /opt/mssql-tools/bin/sqlcmd -S . -U sa -P Testing11@@ \
+		-Q "CREATE DATABASE [DatabaseA] ON (FILENAME = '/var/opt/sqlserver/DatabaseA.mdf'),(FILENAME = '/var/opt/sqlserver/DatabaseA_log.ldf') FOR ATTACH"
+
+
+
