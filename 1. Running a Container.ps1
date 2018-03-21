@@ -1,12 +1,26 @@
 # Pre-requisites
-Install-Module sqlserver -Force
+Install-Module CredentialManager -Force
 Install-Module dbatools -Force
+Install-Module sqlserver -Force
 
-Import-Module sqlserver 
+Import-Module CredentialManager
 Import-Module dbatools
+Import-Module sqlserver 
 
-get-module 
+Get-Module 
 
+Set-Location C:\
+
+
+# set credentials to connect to SQL instances
+$cred = Get-StoredCredential -Target "SqlDocker"
+
+if (!$cred){
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+}
+
+
+Get-StoredCredential -Target "SqlDocker"
 
 # https://dbafromthecold.com/2016/11/16/sql-server-containers-part-one/
 
@@ -31,15 +45,16 @@ docker pull microsoft/mssql-server-linux:latest
 
 
 
-# verify image is in local repository
+# verify image is in repository
 docker images
 
 
 
 # run a container
 docker run -d -p 15111:1433 `
-    --env SA_PASSWORD=Testing11@@ `
-        --name testcontainer1 microsoft/mssql-server-linux:latest
+    --env SA_PASSWORD=Testing1122 `
+        --name testcontainer1 `
+            microsoft/mssql-server-linux:latest
 
 
 
@@ -66,7 +81,7 @@ docker rm testcontainer1
 # run another container, accepting the EULA
 docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
-        --env SA_PASSWORD=Testing11@@ `
+        --env SA_PASSWORD=Testing1122 `
             --name testcontainer1 microsoft/mssql-server-linux:latest
 
 
@@ -82,9 +97,12 @@ docker logs testcontainer1
 
 
 # check version of SQL
-Invoke-Sqlcmd -ServerInstance 'localhost,15111' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT @@VERSION AS SQL_Version' | Format-Table -Wrap
+$srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
+    $srv.Information
+    $srv.Edition
+    $srv.HostDistribution
+    $srv.HostPlatform
+    $srv.Version
 
 
 
@@ -94,7 +112,8 @@ docker exec -it testcontainer1 bash
 
 
 # copy a backup file into the container
-docker cp <INSERT FILEPATH>\DatabaseA.bak `
+$Filepath = ""
+docker cp $Filepath\DatabaseA.bak `
         testcontainer1:'/var/opt/mssql/data/'
 
 
@@ -106,20 +125,17 @@ docker exec -it testcontainer1 bash
 
 
 # restore database in container
-$cred = Get-Credential
-
 Restore-DbaDatabase -SqlInstance 'localhost,15111' `
     -SqlCredential $cred `
         -Path '/var/opt/mssql/data/DatabaseA.bak' `
             -DestinationDataDirectory '/var/opt/mssql/data/' `
                 -DestinationLogDirectory '/var/opt/mssql/log'
 
+            
 
-
-# recheck databases in container
-Invoke-Sqlcmd -ServerInstance 'localhost,15111' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+# check databases in container
+$srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
+    $srv.Databases
 
 
 

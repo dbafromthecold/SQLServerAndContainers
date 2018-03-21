@@ -1,14 +1,27 @@
 # Pre-requisites
-Install-Module sqlserver -Force
+Install-Module CredentialManager -Force
 Install-Module dbatools -Force
+Install-Module sqlserver -Force
 
-Import-Module sqlserver 
+Import-Module CredentialManager
 Import-Module dbatools
+Import-Module sqlserver 
 
-get-module 
+Get-Module 
+
+Set-Location C:\
+
+
+# set credentials to connect to SQL instances
+$cred = Get-StoredCredential -Target "SqlDocker"
+
+if (!$cred){
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+}
 
 
 # https://dbafromthecold.com/2017/02/08/sql-container-from-dockerfile/
+
 
 
 # check local repository
@@ -16,13 +29,13 @@ docker images
 
 
 
-# build custom image from first dockerfile
-docker build -t testimage1 `
-    "<INSERT FILEPATH>\Dockerfile1"
+# build custom image
+$Filepath = "<ENTER FILEPATH>"
+docker build -t testimage1 "$Filepath\Dockerfile1"
 
 
 
-# check image is in local repository
+# check local repository
 docker images
 
 
@@ -37,16 +50,15 @@ docker run -d -p 15555:1433 `
 docker ps -a
 
 
-# check database is in container
-Invoke-Sqlcmd -ServerInstance 'localhost,15555' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+# check databases in container
+$srv = Connect-DbaInstance 'localhost,15555' -Credential $cred
+    $srv.Databases
 
 
 
 # build another custom image from second dockerfile
-docker build -t testimage2 `
-    "<INSERT FILEPATH>\Dockerfile2"
+$Filepath = "<ENTER FILEPATH>"
+docker build -t testimage2 "$Filepath\Dockerfile2"
 
 
 
@@ -66,22 +78,19 @@ docker ps -a
 
 
 
-# check database is in container
-Invoke-Sqlcmd -ServerInstance 'localhost,15666' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+# check databases in container
+$srv = Connect-DbaInstance 'localhost,15666' -Credential $cred
+    $srv.Databases
 
 
 
 # check version of SQL
-Invoke-Sqlcmd -ServerInstance 'localhost,15666' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT @@VERSION AS SQL_Version' | Format-Table -Wrap
-
-
-
-# have a look at the info again
-docker system df --verbose
+$srv = Connect-DbaInstance 'localhost,15666' -Credential $cred
+    $srv.Information
+    $srv.Edition
+    $srv.HostDistribution
+    $srv.HostPlatform
+    $srv.Version
 
 
 

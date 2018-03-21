@@ -1,8 +1,33 @@
+# Pre-requisites
+Install-Module CredentialManager -Force
+Install-Module dbatools -Force
+Install-Module sqlserver -Force
+
+Import-Module CredentialManager
+Import-Module dbatools
+Import-Module sqlserver 
+
+Get-Module 
+
+Set-Location C:\
+
+
+# set credentials to connect to SQL instances
+$cred = Get-StoredCredential -Target "SqlDocker"
+
+if (!$cred){
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+}
+
+
 # https://dbafromthecold.com/2016/11/30/sql-server-containers-part-three/
 
 
+
 # log into the docker hub
-docker login
+$Filepath = "Enter Filepath to password text file"
+Get-Content $filepath `
+                | docker login --username username --password-stdin
 
 
 
@@ -11,8 +36,8 @@ docker images
 
 
 
-# tag custom image (from previous demo) with repository name
-docker tag testimage1 dbafromthecold/testsqlrepository:linuxdemo
+# tag custom image with repository name
+docker tag testimage1 "yourreponame"/testsqlrepository:linuxdemo
 
 
 
@@ -22,15 +47,15 @@ docker images
 
 
 # push image to the hub
-docker push dbafromthecold/testsqlrepository:linuxdemo
+docker push "yourreponame"/testsqlrepository:linuxdemo
 
 
 
 
 # verify image is on the hub
-docker search dbafromthecold
+docker search "yourreponame"
 
 
 
 # clean up
-docker rmi dbafromthecold/testsqlrepository:linuxdemo testimage1
+docker rmi "yourreponame"/testsqlrepository:linuxdemo testimage1

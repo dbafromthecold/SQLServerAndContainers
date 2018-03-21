@@ -1,16 +1,27 @@
-# Install pre-requisite powershell modules
-Install-Module sqlserver -Force
+# Pre-requisites
+Install-Module CredentialManager -Force
 Install-Module dbatools -Force
+Install-Module sqlserver -Force
 
-Import-Module sqlserver 
+Import-Module CredentialManager
 Import-Module dbatools
+Import-Module sqlserver 
 
-# check modules are there
-Get-Module
+Get-Module 
 
+Set-Location C:\
+
+
+# set credentials to connect to SQL instances
+$cred = Get-StoredCredential -Target "SqlDocker"
+
+if (!$cred){
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+}
 
 
 # https://dbafromthecold.com/2017/06/21/persisting-data-in-docker-containers-partone/
+
 ## Mounting volumes from the host
 
 
@@ -26,7 +37,7 @@ New-Item C:\SQLData -ItemType Directory
 # run a container mapping the host volume
 docker run -d -p 15777:1433 `
     -v C:\SQLData:/sqlserver `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer7 microsoft/mssql-server-linux:latest
 
 
@@ -43,7 +54,7 @@ docker exec -it testcontainer7 bash
 
 # create a database within the container
 Invoke-Sqlcmd -ServerInstance 'localhost,15777' `
-    -Username sa -Password 'Testing11@@' `
+    -Username sa -Password 'Testing1122' `
         -Query 'CREATE DATABASE [DatabaseD]
                 ON PRIMARY
                     (NAME = N''DatabaseD'', FILENAME = N''/sqlserver/DatabaseD.mdf'')
@@ -53,30 +64,23 @@ Invoke-Sqlcmd -ServerInstance 'localhost,15777' `
 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,15777' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+$srv = Connect-DbaInstance 'localhost,15777' -Credential $cred
+    $srv.Databases
 
 
 
 # create a test table and insert some data
-Invoke-Sqlcmd -ServerInstance 'localhost,15777' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseD' `
-        -Query 'CREATE TABLE dbo.TestTable1(ID INT);
-                GO
-                INSERT INTO dbo.TestTable1(ID)
-                VALUES
-                (1);
-                GO 100'        
+$srv = Connect-DbaInstance 'localhost,15777' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseD"}
+        $db.Query("CREATE TABLE dbo.TestTable1(ID INT);")
+            $db.Query("INSERT INTO dbo.TestTable1(ID) SELECT TOP 100 1 FROM sys.all_columns")
 
 
 
 # query the test table
-Invoke-Sqlcmd -ServerInstance 'localhost,15777' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseD' `
-            -Query 'SELECT COUNT(*) AS Records FROM dbo.TestTable1'                
+$srv = Connect-DbaInstance 'localhost,15777' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseD"}
+        $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable1")               
 
 
 
@@ -99,7 +103,7 @@ Get-ChildItem C:\SQLData
 # spin up another container with the volume mapped
 docker run -d -p 15888:1433 `
     -v C:\SQLData:/sqlserver `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer8 microsoft/mssql-server-linux:latest
 
 
@@ -110,9 +114,8 @@ docker ps -a
 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,15888' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+$srv = Connect-DbaInstance 'localhost,15888' -Credential $cred
+    $srv.Databases
 
 
 
@@ -122,8 +125,6 @@ docker exec -it testcontainer8 bash
 
 
 # now attach the database
-$cred = Get-Credential
-
 $fileStructure = New-Object System.Collections.Specialized.StringCollection
     $fileStructure.Add('/sqlserver/DatabaseD.mdf')
     $filestructure.Add('/sqlserver/DatabaseD_log.ldf')
@@ -135,18 +136,15 @@ Mount-DbaDatabase -SqlInstance "localhost,15888" `
 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,15888' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+$srv = Connect-DbaInstance 'localhost,15888' -Credential $cred
+    $srv.Databases
     
 
 
 # query the test table
-Invoke-Sqlcmd -ServerInstance 'localhost,15888' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseD' `
-            -Query 'SELECT COUNT(*) AS Records FROM dbo.TestTable1'    
-
+$srv = Connect-DbaInstance 'localhost,15888' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseD"}
+        $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable1") 
 
 
 
@@ -173,7 +171,7 @@ docker volume ls
 # spin up a container with named volume mapped
 docker run -d -p 15999:1433 `
     -v sqlserver:/sqlserver `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer9 microsoft/mssql-server-linux:latest
 
 
@@ -184,7 +182,7 @@ docker ps -a
 
 # create database on the named volume
 Invoke-Sqlcmd -ServerInstance 'localhost,15999' `
-    -Username sa -Password 'Testing11@@' `
+    -Username sa -Password 'Testing1122' `
         -Query 'CREATE DATABASE [DatabaseE]
                 ON PRIMARY
                     (NAME = N''DatabaseE'', FILENAME = N''/sqlserver/DatabaseE.mdf'')
@@ -194,30 +192,23 @@ Invoke-Sqlcmd -ServerInstance 'localhost,15999' `
                 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,15999' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'                            
+$srv = Connect-DbaInstance 'localhost,15999' -Credential $cred
+    $srv.Databases                           
 
 
 
 # create a test table and insert some data
-Invoke-Sqlcmd -ServerInstance 'localhost,15999' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseE' `
-            -Query 'CREATE TABLE dbo.TestTable2(ID INT);
-                GO
-                INSERT INTO dbo.TestTable2(ID)
-                VALUES
-                (1);
-                GO 200'        
+$srv = Connect-DbaInstance 'localhost,15999' -Credential $cred
+$db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseE"}
+    $db.Query("CREATE TABLE dbo.TestTable2(ID INT);")
+        $db.Query("INSERT INTO dbo.TestTable2(ID) SELECT TOP 200 1 FROM sys.all_columns")
 
 
 
 # query the test table
-Invoke-Sqlcmd -ServerInstance 'localhost,15999' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseE' `
-            -Query 'SELECT COUNT(*) AS Records FROM dbo.TestTable2'          
+$srv = Connect-DbaInstance 'localhost,15999' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseE"}
+        $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable2")     
 
 
 
@@ -235,7 +226,7 @@ docker volume ls
 # spin up another container
 docker run -d -p 16100:1433 `
     -v sqlserver:/sqlserver `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer10 microsoft/mssql-server-linux:latest
 
 
@@ -246,8 +237,6 @@ docker ps -a
 
 
 # now attach the database
-$cred = Get-Credential
-
 $fileStructure = New-Object System.Collections.Specialized.StringCollection
     $fileStructure.Add('/sqlserver/DatabaseE.mdf')
     $filestructure.Add('/sqlserver/DatabaseE_log.ldf')
@@ -259,17 +248,15 @@ Mount-DbaDatabase -SqlInstance "localhost,16100" `
 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,16100' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+$srv = Connect-DbaInstance 'localhost,16100' -Credential $cred
+    $srv.Databases
 
 
 
 # query the test table
-Invoke-Sqlcmd -ServerInstance 'localhost,16100' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseE' `
-            -Query 'SELECT COUNT(*) AS Records FROM dbo.TestTable2'            
+$srv = Connect-DbaInstance 'localhost,16100' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseE"}
+        $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable2")             
 
 
 
@@ -299,7 +286,7 @@ docker ps -a
 # spin up a sql container with volume mapped from data container
 docker run -d -p 16110:1433 `
     --volumes-from datastore `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer11 microsoft/mssql-server-linux:latest
 
 
@@ -311,7 +298,7 @@ docker ps -a
 
 # create database
 Invoke-Sqlcmd -ServerInstance 'localhost,16110' `
-    -Username sa -Password 'Testing11@@' `
+    -Username sa -Password 'Testing1122' `
         -Query 'CREATE DATABASE [DatabaseF]
                 ON PRIMARY
                     (NAME = N''DatabaseF'', FILENAME = N''/sqldata/DatabaseF.mdf'')
@@ -321,30 +308,23 @@ Invoke-Sqlcmd -ServerInstance 'localhost,16110' `
 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,16110' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'             
+$srv = Connect-DbaInstance 'localhost,16110' -Credential $cred
+    $srv.Databases           
 
 
 
 # create a test table and insert some data
-Invoke-Sqlcmd -ServerInstance 'localhost,16110' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseF' `
-            -Query 'CREATE TABLE dbo.TestTable3(ID INT);
-                GO
-                INSERT INTO dbo.TestTable3(ID)
-                VALUES
-                (1);
-                GO 300'        
+$srv = Connect-DbaInstance 'localhost,16110' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseF"}
+        $db.Query("CREATE TABLE dbo.TestTable3(ID INT);")
+            $db.Query("INSERT INTO dbo.TestTable3(ID) SELECT TOP 300 1 FROM sys.all_columns")      
 
 
 
 # query the test table
-Invoke-Sqlcmd -ServerInstance 'localhost,16110' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseF' `
-            -Query 'SELECT COUNT(*) AS Records FROM dbo.TestTable3'             
+$srv = Connect-DbaInstance 'localhost,16110' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseF"}
+        $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable3")              
 
 
 
@@ -362,14 +342,12 @@ docker ps -a
 # spin up another container
 docker run -d -p 16120:1433 `
     --volumes-from datastore `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer12 microsoft/mssql-server-linux:latest 
             
 
 
 # now attach the database
-$cred = Get-Credential
-
 $fileStructure = New-Object System.Collections.Specialized.StringCollection
     $fileStructure.Add('/sqldata/DatabaseF.mdf')
     $filestructure.Add('/sqllog/DatabaseF_log.ldf')
@@ -381,19 +359,17 @@ Mount-DbaDatabase -SqlInstance "localhost,16120" `
 
 
 # check database is there
-Invoke-Sqlcmd -ServerInstance 'localhost,16120' `
-    -Username sa -Password 'Testing11@@' `
-        -Query 'SELECT name FROM sys.databases ORDER BY name ASC'
+$srv = Connect-DbaInstance 'localhost,16120' -Credential $cred
+    $srv.Databases
 
 
-
-# query the test table
-Invoke-Sqlcmd -ServerInstance 'localhost,16120' `
-    -Username sa -Password 'Testing11@@' `
-        -Database 'DatabaseF' `
-            -Query 'SELECT COUNT(*) AS Records FROM dbo.TestTable3'     
             
-        
+# query the test table
+$srv = Connect-DbaInstance 'localhost,16120' -Credential $cred
+    $db = $srv.Databases | Where-Object {$_.Name -eq "DatabaseF"}
+        $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable3")          
+
+
 
 # clean up
 docker kill testcontainer12
