@@ -24,7 +24,7 @@ if (!$cred){
 
 
 # log into the docker hub
-$PasswordFile = "C:\Git\PrivateCodeRepo\Docker\dockerlogin.txt"
+$PasswordFile = "C:\Git\dbafromthecold\SQLServerAndContainersDemo\dockerlogin.txt"
 Get-Content $PasswordFile `
     | docker login --username dbafromthecold --password-stdin
 
