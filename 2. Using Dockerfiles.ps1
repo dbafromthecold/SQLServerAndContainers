@@ -29,7 +29,7 @@ docker images
 
 
 # build custom image
-$Filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles"
+$Filepath = "C:\Git\dbafromthecold\SQLServerAndContainerDemos\Dockerfiles"
 docker build -t testimage1 $Filepath\Dockerfile1
 
 
@@ -58,7 +58,7 @@ Get-DbaDatabase -SqlInstance 'localhost,15555' -SqlCredential $Cred `
 
 
 # build another custom image from second dockerfile
-$Filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles"
+$Filepath = "C:\Git\dbafromthecold\SQLServerAndContainerDemos\Dockerfiles"
 docker build -t testimage2 $Filepath\Dockerfile2
 
 

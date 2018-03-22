@@ -109,7 +109,7 @@ docker exec -it testcontainer1 bash
 
 
 # copy a backup file into the container
-$filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\DatabaseBackup"
+$filepath = "C:\Git\dbafromthecold\SQLServerAndContainerDemos\DatabaseBackup"
 docker cp $filepath\DatabaseA.bak `
         testcontainer1:'/var/opt/mssql/data/'
 
