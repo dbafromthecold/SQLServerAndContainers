@@ -142,12 +142,12 @@ $srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
 # let's run a couple more containers
 docker run -d -p 15222:1433 `
 --env ACCEPT_EULA=Y `
-    --env SA_PASSWORD=Testing11@@ `
+    --env SA_PASSWORD=Testing1122 `
         --name testcontainer2 microsoft/mssql-server-linux:latest
 
 docker run -d -p 15333:1433 `
     --env ACCEPT_EULA=Y `
-        --env SA_PASSWORD=Testing11@@ `
+        --env SA_PASSWORD=Testing1122 `
             --name testcontainer3 microsoft/mssql-server-linux:latest
 
 
@@ -170,7 +170,7 @@ docker stats
 # run a container limiting the resources
 docker run -d -p 15444:1433 `
     --cpus=2 --memory=2048m `
-            --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing11@@ `
+            --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
                 --name testcontainer4 microsoft/mssql-server-linux:latest
 
 
