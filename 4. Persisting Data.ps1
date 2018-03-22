@@ -158,6 +158,12 @@ docker rm testcontainer8
 ## Named Volumes
 
 
+
+# remove unused volumes
+docker volume prune
+
+
+
 # create the named volume
 docker volume create sqlserver
 
