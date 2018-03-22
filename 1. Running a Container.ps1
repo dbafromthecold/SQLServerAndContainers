@@ -1,11 +1,10 @@
 # Pre-requisites
 Install-Module CredentialManager -Force
 Install-Module dbatools -Force
-Install-Module sqlserver -Force
 
 Import-Module CredentialManager
 Import-Module dbatools
-Import-Module sqlserver 
+
 
 Get-Module 
 
@@ -16,7 +15,7 @@ Set-Location C:\
 $cred = Get-StoredCredential -Target "SqlDocker"
 
 if (!$cred){
-    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist Session
 }
 
 
@@ -82,7 +81,8 @@ docker rm testcontainer1
 docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
-            --name testcontainer1 microsoft/mssql-server-linux:latest
+            --name testcontainer1 `
+                microsoft/mssql-server-linux:latest
 
 
 
@@ -97,12 +97,9 @@ docker logs testcontainer1
 
 
 # check version of SQL
-$srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
-    $srv.Information
-    $srv.Edition
-    $srv.HostDistribution
-    $srv.HostPlatform
-    $srv.Version
+Connect-DbaInstance -SqlInstance 'localhost,15111' -Credential $cred `
+    | Select-Object Product, HostDistribution, HostPlatform, Version
+
 
 
 
@@ -112,13 +109,12 @@ docker exec -it testcontainer1 bash
 
 
 # copy a backup file into the container
-$Filepath = ""
-docker cp $Filepath\DatabaseA.bak `
+$filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\DatabaseBackup"
+docker cp $filepath\DatabaseA.bak `
         testcontainer1:'/var/opt/mssql/data/'
 
 
  
-
 # check that the backup file is there
 docker exec -it testcontainer1 bash
 
@@ -134,21 +130,23 @@ Restore-DbaDatabase -SqlInstance 'localhost,15111' `
             
 
 # check databases in container
-$srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
-    $srv.Databases
+Get-DbaDatabase -SqlInstance 'localhost,15111' -SqlCredential $Cred `
+    | Select-Object Name  
 
 
-
+    
 # let's run a couple more containers
 docker run -d -p 15222:1433 `
---env ACCEPT_EULA=Y `
-    --env SA_PASSWORD=Testing1122 `
-        --name testcontainer2 microsoft/mssql-server-linux:latest
+    --env ACCEPT_EULA=Y `
+        --env SA_PASSWORD=Testing1122 `
+            --name testcontainer2 `
+                microsoft/mssql-server-linux:latest
 
 docker run -d -p 15333:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
-            --name testcontainer3 microsoft/mssql-server-linux:latest
+            --name testcontainer3 `
+                microsoft/mssql-server-linux:latest
 
 
 
@@ -171,7 +169,8 @@ docker stats
 docker run -d -p 15444:1433 `
     --cpus=2 --memory=2048m `
             --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
-                --name testcontainer4 microsoft/mssql-server-linux:latest
+                --name testcontainer4 `
+                    microsoft/mssql-server-linux:latest
 
 
 

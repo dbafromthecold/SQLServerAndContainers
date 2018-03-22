@@ -1,11 +1,10 @@
 # Pre-requisites
 Install-Module CredentialManager -Force
 Install-Module dbatools -Force
-Install-Module sqlserver -Force
 
 Import-Module CredentialManager
 Import-Module dbatools
-Import-Module sqlserver 
+ 
 
 Get-Module 
 
@@ -16,7 +15,7 @@ Set-Location C:\
 $cred = Get-StoredCredential -Target "SqlDocker"
 
 if (!$cred){
-    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist Session
 }
 
 
@@ -25,9 +24,9 @@ if (!$cred){
 
 
 # log into the docker hub
-$Filepath = "Enter Filepath to password text file"
-Get-Content $filepath `
-                | docker login --username username --password-stdin
+$PasswordFile = "C:\Git\PrivateCodeRepo\Docker\dockerlogin.txt"
+Get-Content $PasswordFile `
+    | docker login --username dbafromthecold --password-stdin
 
 
 
@@ -37,7 +36,7 @@ docker images
 
 
 # tag custom image with repository name
-docker tag testimage1 "yourreponame"/testsqlrepository:linuxdemo
+docker tag testimage1 dbafromthecold/testsqlrepository:linuxdemo
 
 
 
@@ -47,15 +46,15 @@ docker images
 
 
 # push image to the hub
-docker push "yourreponame"/testsqlrepository:linuxdemo
+docker push dbafromthecold/testsqlrepository:linuxdemo
 
 
 
 
 # verify image is on the hub
-docker search "yourreponame"
+docker search dbafromthecold
 
 
 
 # clean up
-docker rmi "yourreponame"/testsqlrepository:linuxdemo testimage1
+docker rmi dbafromthecold/testsqlrepository:linuxdemo testimage1

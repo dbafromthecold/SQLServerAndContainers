@@ -1,11 +1,10 @@
 # Pre-requisites
 Install-Module CredentialManager -Force
 Install-Module dbatools -Force
-Install-Module sqlserver -Force
 
 Import-Module CredentialManager
 Import-Module dbatools
-Import-Module sqlserver 
+
 
 Get-Module 
 
@@ -16,7 +15,7 @@ Set-Location C:\
 $cred = Get-StoredCredential -Target "SqlDocker"
 
 if (!$cred){
-    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist Session
 }
 
 
@@ -30,8 +29,8 @@ docker images
 
 
 # build custom image
-$Filepath = "<ENTER FILEPATH>"
-docker build -t testimage1 "$Filepath\Dockerfile1"
+$Filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles"
+docker build -t testimage1 $Filepath\Dockerfile1
 
 
 
@@ -42,7 +41,8 @@ docker images
 
 # run container from custom image
 docker run -d -p 15555:1433 `
-    --name testcontainer5 testimage1
+    --name testcontainer5 `
+        testimage1
 
 
 
@@ -50,15 +50,16 @@ docker run -d -p 15555:1433 `
 docker ps -a
 
 
+
 # check databases in container
-$srv = Connect-DbaInstance 'localhost,15555' -Credential $cred
-    $srv.Databases
+Get-DbaDatabase -SqlInstance 'localhost,15555' -SqlCredential $Cred `
+    | Select-Object Name
 
 
 
 # build another custom image from second dockerfile
-$Filepath = "<ENTER FILEPATH>"
-docker build -t testimage2 "$Filepath\Dockerfile2"
+$Filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles"
+docker build -t testimage2 $Filepath\Dockerfile2
 
 
 
@@ -69,7 +70,8 @@ docker images
 
 # run container from second custom image
 docker run -d -p 15666:15666 `
-    --name testcontainer6 testimage2
+    --name testcontainer6 `
+        testimage2
 
 
 
@@ -79,18 +81,14 @@ docker ps -a
 
 
 # check databases in container
-$srv = Connect-DbaInstance 'localhost,15666' -Credential $cred
-    $srv.Databases
+Get-DbaDatabase -SqlInstance 'localhost,15666' -SqlCredential $Cred `
+    | Select-Object Name
 
 
 
 # check version of SQL
-$srv = Connect-DbaInstance 'localhost,15666' -Credential $cred
-    $srv.Information
-    $srv.Edition
-    $srv.HostDistribution
-    $srv.HostPlatform
-    $srv.Version
+Connect-DbaInstance -SqlInstance 'localhost,15666' -Credential $cred `
+    | Select-Object Product, HostDistribution, HostPlatform, Version, Edition
 
 
 
