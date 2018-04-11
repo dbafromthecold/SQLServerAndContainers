@@ -51,34 +51,6 @@ docker images
 
 # run a container
 docker run -d -p 15111:1433 `
-    --env SA_PASSWORD=Testing1122 `
-        --name testcontainer1 `
-            microsoft/mssql-server-linux:latest
-
-
-
-# verify container is running
-docker ps
-
-
-
-# check status of container
-docker ps -a
-
-
-
-# hmmm, container isn't running. Check the logs
-docker logs testcontainer1
-
-
-
-# d'oh! Need to accept the EULA. Delete current container
-docker rm testcontainer1
-
-
-
-# run another container, accepting the EULA
-docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
             --name testcontainer1 `
@@ -109,7 +81,7 @@ docker exec -it testcontainer1 bash
 
 
 # copy a backup file into the container
-$filepath = "C:\Git\dbafromthecold\SQLServerAndContainerDemos\DatabaseBackup"
+$filepath = "C:\Git\dbafromthecold\SQLServerAndContainersDemo\DatabaseBackup"
 docker cp $filepath\DatabaseA.bak `
         testcontainer1:'/var/opt/mssql/data/'
 
@@ -155,11 +127,6 @@ docker ps -a
 
 
 
-# have a look at the system stats
-docker system df --verbose
-
-
-
 # stats on container usage
 docker stats
 
@@ -185,6 +152,4 @@ docker stats
 
 
 # clean up
-docker kill testcontainer1 testcontainer2 testcontainer3 testcontainer4
-docker rm testcontainer1 testcontainer2 testcontainer3 testcontainer4
-
+docker rm $(docker ps -a -q) -f

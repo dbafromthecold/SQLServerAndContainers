@@ -29,7 +29,7 @@ docker images
 
 
 # build custom image
-$Filepath = "C:\Git\dbafromthecold\SQLServerAndContainerDemos\Dockerfiles"
+$Filepath = "C:\Git\dbafromthecold\SQLServerAndContainersDemo\Dockerfiles"
 docker build -t testimage1 $Filepath\Dockerfile1
 
 
@@ -58,7 +58,7 @@ Get-DbaDatabase -SqlInstance 'localhost,15555' -SqlCredential $Cred `
 
 
 # build another custom image from second dockerfile
-$Filepath = "C:\Git\dbafromthecold\SQLServerAndContainerDemos\Dockerfiles"
+$Filepath = "C:\Git\dbafromthecold\SQLServerAndContainersDemo\Dockerfiles"
 docker build -t testimage2 $Filepath\Dockerfile2
 
 
@@ -93,7 +93,6 @@ Connect-DbaInstance -SqlInstance 'localhost,15666' -Credential $cred `
 
 
 # clean up
-docker kill testcontainer5 testcontainer6
-docker rm testcontainer5 testcontainer6
+docker rm $(docker ps -a -q) -f
 
 docker rmi testimage2
