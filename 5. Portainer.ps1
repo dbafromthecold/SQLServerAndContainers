@@ -52,8 +52,8 @@ docker ps -a
 
 
 # connect to SQL container
-$srv = Connect-DbaInstance 'localhost,15799' -Credential $cred
-    $srv.Databases
+Get-DbaDatabase -SqlInstance 'localhost,15777' -SqlCredential $Cred `
+    | Select-Object Name  
 
 
         
