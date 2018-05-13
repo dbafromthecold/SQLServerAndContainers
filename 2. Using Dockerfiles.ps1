@@ -70,8 +70,9 @@ docker images
 
 # run container from second custom image
 docker run -d -p 15666:15666 `
-    --name testcontainer6 `
-        testimage2
+    --env SA_PASSWORD=Testing1122 `
+        --name testcontainer6 `
+            testimage2
 
 
 
