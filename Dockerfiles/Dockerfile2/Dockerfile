@@ -25,5 +25,5 @@ ENV MSSQL_TCP_PORT=15666
 
 HEALTHCHECK --interval=10s  \
 	CMD /opt/mssql/bin/sqlservr & \
-	/opt/mssql-tools/bin/sqlcmd -S . -U sa -P $SA_PASSWORD \
+	/opt/mssql-tools/bin/sqlcmd -S localhost,15666 -U sa -P $SA_PASSWORD \
 		-Q "CREATE DATABASE [DatabaseC] ON (FILENAME = '/var/opt/sqlserver/DatabaseC.mdf'),(FILENAME = '/var/opt/sqlserver/DatabaseC_log.ldf') FOR ATTACH"
