@@ -19,7 +19,7 @@ if (!$cred){
 }
 
 
-Get-StoredCredential -Target "SqlDocker"
+$cred = Get-StoredCredential -Target "SqlDocker"
 
 # https://dbafromthecold.com/2016/11/16/sql-server-containers-part-one/
 
