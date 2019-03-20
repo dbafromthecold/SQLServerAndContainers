@@ -43,7 +43,6 @@ Containers wrap a piece of software in a complete filesystem that contains every
 
 ### Demo Time!
 <br>
-<br>
 Tools I'll be using: -
 
 @ul
@@ -52,7 +51,6 @@ Tools I'll be using: -
 - @size[0.9em](mssql-cli)<br>
 - @size[0.9em](Azure Data Studio)<br>
 @ulend
-
 
 ---
 
