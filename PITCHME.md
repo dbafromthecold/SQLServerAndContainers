@@ -47,9 +47,9 @@ Tools I'll be using: -
 
 @ul
 - @size[0.9em](VS Code <br> https://code.visualstudio.com/)<br>
-- @size[0.9em](Docker Desktop https://www.docker.com/products/docker-desktop)<br>
-- @size[0.9em](mssql-cli https://docs.microsoft.com/en-us/sql/tools/mssql-cli)<br>
-- @size[0.9em](Azure Data Studio https://docs.microsoft.com/en-us/sql/azure-data-studio/)<br>
+- @size[0.9em](Docker Desktop <br> https://www.docker.com/products/docker-desktop)<br>
+- @size[0.9em](mssql-cli <br> https://docs.microsoft.com/en-us/sql/tools/mssql-cli)<br>
+- @size[0.9em](Azure Data Studio <br> https://docs.microsoft.com/en-us/sql/azure-data-studio/)<br>
 @ulend
 
 ---
