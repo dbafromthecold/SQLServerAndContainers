@@ -5,7 +5,7 @@
 ### Sponsors
 
 <img src="assets/images/EWU_Logo_240x76.png" size=small border=none/>
-</br>
+<br>
 <img src="assets/images/IntelliTect_BlueBlack.png" size=small border=none/>
 
 ---
@@ -41,7 +41,17 @@ Containers wrap a piece of software in a complete filesystem that contains every
 
 ---
 
-## Demos
+### Demo Time!
+
+Tools I'll be using: -
+
+@ul
+- @size[0.9em](VS Code)<br>
+- @size[0.9em](docker desktop)<br>
+- @size[0.9em](mssql-cli)<br>
+- @size[0.9em](Azure Data Studio)<br>
+@ulend
+
 
 ---
 
