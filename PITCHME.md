@@ -46,7 +46,7 @@ Containers wrap a piece of software in a complete filesystem that contains every
 Tools I'll be using: -
 
 @ul
-- @size[0.9em](VS Code https://code.visualstudio.com/)<br>
+- @size[0.9em](VS Code <br> https://code.visualstudio.com/)<br>
 - @size[0.9em](Docker Desktop https://www.docker.com/products/docker-desktop)<br>
 - @size[0.9em](mssql-cli https://docs.microsoft.com/en-us/sql/tools/mssql-cli)<br>
 - @size[0.9em](Azure Data Studio https://docs.microsoft.com/en-us/sql/azure-data-studio/)<br>
