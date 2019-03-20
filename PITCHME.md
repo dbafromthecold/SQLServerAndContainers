@@ -2,7 +2,7 @@
 
 ---
 
-# Sponsors
+### Sponsors
 
 <img src="assets/images/EWU_Logo_240x76.png" size=small border=none/>
 </br>
