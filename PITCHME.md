@@ -2,20 +2,6 @@
 
 ---
 
-### Sponsors
-
-<img src="assets/images/EWU_Logo_240x76.png" size=small border=none/>
-<br>
-<img src="assets/images/IntelliTect_BlueBlack.png" size=small border=none/>
-
----
-
-<img src="assets/images/Microsoft.Azure.png" size=small border=none/>
-<br>
-<img src="assets/images/pass-logo-2016.png" size=small border=none/>
-
----
-
 ## Andrew Pruski
 
 ### SQL Server DBA & Microsoft Data Platform MVP
