@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: sqlserver
+  labels:
+    app: sqlserver
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: sqlserver
+    spec:
+      containers:
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server:2019-CTP2.3-ubuntu
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          value: Testing1122
+        - name: ACCEPT_EULA
+          value: "Y"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlserver-service
+spec:
+  ports:
+  - name: sqlserver
+    port: 1433
+    targetPort: 1433
+  selector:
+    name: sqlserver
+  type: ClusterIP
