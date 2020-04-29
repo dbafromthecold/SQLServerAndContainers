@@ -1,4 +1,7 @@
 
+# https://docs.docker.com/compose/
+
+
 
 # navigate to directory
 cd C:\git\SQLServerAndContainers\demos\Compose
