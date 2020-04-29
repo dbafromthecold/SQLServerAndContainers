@@ -1,0 +1,29 @@
+
+FROM mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
+
+USER root
+
+RUN mkdir /var/opt/sqlserver
+
+
+COPY DatabaseC.mdf /var/opt/sqlserver
+COPY DatabaseC_log.ldf /var/opt/sqlserver
+
+USER mssql
+
+ENV ACCEPT_EULA=Y
+
+
+ENV MSSQL_PID=Enterprise
+
+
+ENV MSSQL_BACKUP_DIR="/var/opt/sqlserver"
+ENV MSSQL_DATA_DIR="/var/opt/sqlserver"
+ENV MSSQL_LOG_DIR="/var/opt/sqlserver"
+
+
+ENV MSSQL_TCP_PORT=15666
+
+COPY attach-db.sh /var/opt/sqlserver
+
+ENTRYPOINT /var/opt/sqlserver/attach-db.sh & /opt/mssql/bin/sqlservr
