@@ -43,5 +43,5 @@ Containers wrap a piece of software in a complete filesystem that contains every
 @size[0.8em](https://dbafromthecold.com/2017/03/15/summary-of-my-container-series/)
 
 <p align="center">
-  <img src="assets/images/SqlServerAndContainersQRCode.png" />
+  <img src="assets/images/SQLServerAndContainersQRCode.png" />
 </p>
