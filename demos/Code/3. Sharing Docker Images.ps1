@@ -2,7 +2,6 @@
 # https://dbafromthecold.com/2016/11/30/sql-server-containers-part-three/
 
 
-# create your own dockerlogin.txt file with your docker hub password in it
 # log into the docker hub
 docker login --username dbafromthecold
 
