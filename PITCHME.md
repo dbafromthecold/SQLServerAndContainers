@@ -34,12 +34,6 @@ Containers wrap a piece of software in a complete filesystem that contains every
 
 ---
 
-### Virtual Machines vs Containers
-
-<img src="assets/images/VmsVsContainers.png" style="float: right;" size=medium border=none/>
-
----
-
 # Demo Time!
 
 ---
