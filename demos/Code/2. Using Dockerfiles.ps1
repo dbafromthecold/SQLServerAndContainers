@@ -1,5 +1,5 @@
 
-# https://dbafromthecold.com/2017/02/08/sql-container-from-dockerfile/
+# https://dbafromthecold.com/2018/12/11/attaching-databases-via-a-dockerfile-update/
 
 
 
@@ -34,7 +34,7 @@ testimage1
 
 
 # check container is running
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 

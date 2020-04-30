@@ -1,5 +1,6 @@
 
 # https://dbafromthecold.com/2017/06/28/persisting-data-in-docker-containers-part-two/
+# https://dbafromthecold.com/2019/11/18/using-volumes-in-sql-server-2019-non-root-containers/ 
 ## Named Volumes
 
 
@@ -31,11 +32,12 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 # check the container is running
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
 # grant mssql user access to location
+# this is due to the SQL instance running as non-root within the container!
 docker exec -u 0 testcontainer6 bash -c "chown -R mssql /var/opt/sqlserver"
 
 
@@ -78,7 +80,7 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 # verify container is running
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
@@ -132,7 +134,7 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 # check the container is running
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
@@ -158,7 +160,7 @@ docker container rm testcontainer8 -f
 
 
 # confirm that container is gone
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 

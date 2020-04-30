@@ -1,5 +1,5 @@
 
-# https://dbafromthecold.com/2016/11/16/sql-server-containers-part-one/
+# https://dbafromthecold.com/2018/09/25/running-sql-server-2019-ctp-in-a-docker-container/
 
 
 
@@ -14,6 +14,7 @@ docker search mssql
 
 
 # get tags from MCR
+# https://dbafromthecold.com/2019/02/22/displaying-the-tags-within-the-sql-server-docker-repository/
 $repo = invoke-webrequest https://mcr.microsoft.com/v2/mssql/server/tags/list
 $repo.content
 
@@ -44,17 +45,36 @@ docker container ls -a
 
 
 
+# let's clean that command up a bit, just so the output looks nice for this presentation! 
+# https://docs.docker.com/engine/reference/commandline/container_ls/
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
+
+
+
 # cool! container is running. Checking the logs...
+# https://dbafromthecold.com/2017/02/15/viewing-container-logs/
 docker container logs testcontainer1
 
 
 
 # connect to sql instance
+# https://docs.microsoft.com/en-us/sql/tools/mssql-cli
 mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT @@VERSION;"
 
 
 
+# In the logs we have....
+#
+### SQL Server 2019 will run as non-root by default.
+### This container is running as user mssql.
+# 
+# More on this later, but this is a good thing!
+# Check out https://dbafromthecold.com/2019/09/18/running-sql-server-containers-as-non-root/
+
+
+
 # let's have a look within the container
+# https://docs.docker.com/engine/reference/commandline/container_exec/
 docker container exec -it testcontainer1 bash
 
 
@@ -75,12 +95,14 @@ exit
 
 
 # copy a backup file into the container
+# https://dbafromthecold.com/2017/05/10/copying-files-fromto-a-container/
 docker container cp C:\git\SQLServerAndContainers\demos\DatabaseBackup\DatabaseA.bak `
 testcontainer1:/var/opt/mssql/data/
 
 
  
 # check that the backup file is there
+# we can add a command to the end of exec so we don't have to jump into the container
 docker container exec testcontainer1 bash -c "ls -al /var/opt/mssql/data/"
 
 
@@ -113,16 +135,18 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 # verify containers are running
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
 # stats on container usage
+# https://docs.docker.com/engine/reference/commandline/container_stats/
 docker container stats
 
 
 
 # run a container limiting the resources
+# https://dbafromthecold.com/2019/06/19/default-resource-limits-for-windows-vs-linux-containers/
 docker container run -d `
 -p 15444:1433 `
 --cpus=2 `
@@ -135,7 +159,7 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 # check container is running
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
@@ -145,4 +169,6 @@ docker container stats
 
 
 # clean up
-docker container rm $(docker ps -a -q) -f
+# https://dbafromthecold.com/2017/09/28/the-docker-kill-command/
+docker container kill $(docker ps -a -q)
+docker container rm $(docker ps -a -q)

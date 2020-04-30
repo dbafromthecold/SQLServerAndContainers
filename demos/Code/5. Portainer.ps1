@@ -27,7 +27,7 @@ docker container run -d `
 
 
 # verify container
-docker container ls -a
+docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
