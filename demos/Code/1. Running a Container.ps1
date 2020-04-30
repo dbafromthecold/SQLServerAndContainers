@@ -79,7 +79,7 @@ docker container logs testcontainer1
 
 # connect to sql instance
 # https://docs.microsoft.com/en-us/sql/tools/mssql-cli
-mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT @@VERSION; AS [Version]"
+mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT @@VERSION AS [Version]"
 
 
 
