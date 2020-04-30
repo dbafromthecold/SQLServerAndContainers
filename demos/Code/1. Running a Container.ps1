@@ -4,7 +4,7 @@
 
 
 
-# verify docker is responding to commands
+# verify docker version
 docker version
 
 
