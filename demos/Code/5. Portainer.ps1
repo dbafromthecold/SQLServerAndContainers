@@ -3,8 +3,11 @@
 # https://portainer.io/
 
 
+
+
 # search for image
 docker search portainer
+
 
 
 
@@ -13,8 +16,10 @@ docker pull portainer/portainer
 
 
 
+
 # verify image in repository
 docker image ls
+
 
 
 
@@ -26,13 +31,16 @@ docker container run -d `
 
 
 
+
 # verify container
 docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
+
 # connect to SQL container
 mssql-cli -S localhost,15789 -U sa -P Testing1122 -Q "SELECT @@VERSION AS [Version];"
+
 
 
         

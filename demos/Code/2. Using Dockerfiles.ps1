@@ -3,13 +3,22 @@
 
 
 
+
 # check local repository
 docker image ls
 
 
 
+
 # view dockerfile
 cat "C:/git/SQLServerAndContainers/demos/Dockerfiles/dockerfile"
+
+
+
+
+# view attach-db script
+cat "C:/git/SQLServerAndContainers/demos/Dockerfiles/attach-db.sh"
+
 
 
 
@@ -19,8 +28,10 @@ docker image build -t testimage1 $Filepath
 
 
 
+
 # check image
 docker image ls
+
 
 
 
@@ -33,8 +44,10 @@ testimage1
 
 
 
+
 # check container is running
 docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
+
 
 
 
@@ -43,8 +56,10 @@ mssql-cli -S localhost,15555 -U sa -P Testing1122 -Q "SELECT @@VERSION AS [Versi
  
 
 
+
 # check databases
 mssql-cli -S localhost,15555 -U sa -P Testing1122 -Q "SELECT [name] FROM sys.databases;"
+
 
 
 

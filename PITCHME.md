@@ -13,9 +13,15 @@
 
 ---
 
-### Session Aim
+### Agenda
 
-To give an overview of the different options available to run SQL Server in containers
+- Container Definition
+- Running SQL Server in a container
+- Custom images
+- Sharing images
+- Persisting data
+- Portainer
+- Compose
 
 ---
 

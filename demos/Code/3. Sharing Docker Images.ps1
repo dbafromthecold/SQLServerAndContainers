@@ -3,8 +3,16 @@
 
 
 
+
 # log into the docker hub
 cat C:\git\SQLServerAndContainers\dockerlogin.txt | docker login --username dbafromthecold --password-stdin
+
+
+
+
+# just in case the above command doesn't work
+docker login --username dbafromthecold
+
 
 
 
@@ -13,8 +21,10 @@ docker image ls
 
 
 
+
 # tag custom image with repository name
 docker image tag testimage1 dbafromthecold/testsqlrepository:demoimage
+
 
 
 
@@ -23,8 +33,10 @@ docker image ls
 
 
 
+
 # push image to the hub
 docker image push dbafromthecold/testsqlrepository:demoimage
+
 
 
 
@@ -35,8 +47,10 @@ docker search dbafromthecold
 
 
 
+
 # clean up
 docker image rm dbafromthecold/testsqlrepository:demoimage testimage1
+
 
 
 

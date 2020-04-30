@@ -3,13 +3,16 @@
 
 
 
+
 # verify docker is responding to commands
 docker version
 
 
 
+
 # search for an image on the docker hub
 docker search mssql
+
 
 
 
@@ -20,8 +23,10 @@ $repo.content
 
 
 
+
 # pull image down to local repository
 docker image pull mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
+
 
 
 
@@ -40,8 +45,10 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 
+
 # verify container is running
 docker container ls -a
+
 
 
 
@@ -51,15 +58,11 @@ docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\
 
 
 
+
 # cool! container is running. Checking the logs...
 # https://dbafromthecold.com/2017/02/15/viewing-container-logs/
 docker container logs testcontainer1
 
-
-
-# connect to sql instance
-# https://docs.microsoft.com/en-us/sql/tools/mssql-cli
-mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT @@VERSION;"
 
 
 
@@ -73,9 +76,18 @@ mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT @@VERSION;"
 
 
 
+
+# connect to sql instance
+# https://docs.microsoft.com/en-us/sql/tools/mssql-cli
+mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT @@VERSION; AS [Version]"
+
+
+
+
 # let's have a look within the container
 # https://docs.docker.com/engine/reference/commandline/container_exec/
 docker container exec -it testcontainer1 bash
+
 
 
 
@@ -84,13 +96,16 @@ cd /var/opt/mssql/data
 
 
 
+
 # list files
 ls -al
 
 
 
+
 # exit the container
 exit
+
 
 
 
@@ -100,10 +115,12 @@ docker container cp C:\git\SQLServerAndContainers\demos\DatabaseBackup\DatabaseA
 testcontainer1:/var/opt/mssql/data/
 
 
+
  
 # check that the backup file is there
 # we can add a command to the end of exec so we don't have to jump into the container
 docker container exec testcontainer1 bash -c "ls -al /var/opt/mssql/data/"
+
 
 
 
@@ -112,11 +129,13 @@ mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "RESTORE DATABASE [Databa
 
 
 
+
 # check databases in container
 mssql-cli -S 'localhost,15111' -U sa -P Testing1122 -Q "SELECT [name] FROM sys.databases;"
 
 
     
+
 # let's run a couple more containers
 docker container run -d `
 -p 15222:1433 `
@@ -134,14 +153,17 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 
+
 # verify containers are running
 docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
+
 
 
 
 # stats on container usage
 # https://docs.docker.com/engine/reference/commandline/container_stats/
 docker container stats
+
 
 
 
@@ -158,13 +180,16 @@ mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
 
 
 
+
 # check container is running
 docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\t{{.Ports}}"
 
 
 
+
 # check the stats
 docker container stats
+
 
 
 

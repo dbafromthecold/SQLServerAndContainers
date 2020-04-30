@@ -3,8 +3,10 @@
 
 
 
+
 # navigate to directory
 cd C:\git\SQLServerAndContainers\demos\Compose
+
 
 
 
@@ -13,8 +15,10 @@ cat docker-compose.yaml
 
 
 
+
 # view dockerfile
 cat dockerfile
+
 
 
 
@@ -23,13 +27,10 @@ cat sqlserver.env
 
 
 
+
 # spin up container
 docker-compose up -d
 
-
-
-# view custom network
-docker network ls
 
 
 
@@ -38,8 +39,10 @@ docker image ls
 
 
 
+
 # view volumes created
 docker volume ls
+
 
 
 
@@ -48,13 +51,16 @@ docker container ls -a --format "table {{.Names }}\t{{ .Image }}\t{{ .Status }}\
 
 
 
+
 # connect to sql in container
-mssql-cli -S localhost,15789 -U sa -P Testing1122 -Q "SELECT @@VERSION"
+mssql-cli -S localhost,15789 -U sa -P Testing1122 -Q "SELECT @@VERSION AS [Version]"
+
 
 
 
 # shutdown container
 docker-compose down
+
 
 
 
