@@ -15,13 +15,14 @@
 
 ### Agenda
 
+@ul
 - Container Definition
 - Running SQL Server in a container
 - Custom images
 - Sharing images
 - Persisting data
 - Portainer
-- Compose
+@ulend
 
 ---
 
