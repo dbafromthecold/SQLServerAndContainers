@@ -1,4 +1,2 @@
-### SQL Server and Containers Demo
+### SQL Server and Containers Demos
 
-Slides for my SQL Server & Containers session can be found here: -
-https://gitpitch.com/dbafromthecold/SqlServerAndContainers
